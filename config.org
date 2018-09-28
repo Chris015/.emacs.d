@@ -1,0 +1,154 @@
+
+#+TITLE: Emacs Configuration
+#+DATE: <2018-02-25 Sun>
+#+AUTHOR: Christopher Olsson
+
+* Inital setup
+** Window
+#+BEGIN_SRC emacs-lisp
+;;; Turn off mouse interface early in startup to avoid momentary display
+(when window-system
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (scroll-bar-mode -1)
+  (tooltip-mode -1))
+
+(setq inhibit-startup-message t)
+
+(custom-set-variables
+ '(initial-frame-alist (quote ((fullscreen . maximized)))))
+#+END_SRC
+** Package
+#+BEGIN_SRC emacs-lisp
+(require 'package)
+(add-to-list 'package-archives
+             '("melpa" . "http://melpa.org/packages/") t)
+(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
+(when (boundp 'package-pinned-packages)
+  (setq package-pinned-packages
+        '((org-plus-contrib . "org"))))
+(package-initialize)
+
+;;; Bootstrap use-package
+;; Install use-package if it's not already installed.
+;; use-package is used to configure the rest of the packages.
+(unless (package-installed-p 'use-package)
+  (package-refresh-contents)
+  (package-install 'use-package))
+
+(eval-when-compile
+  (require 'use-package))
+(require 'bind-key)
+#+END_SRC
+
+* Org-mode
+** installation
+#+BEGIN_SRC emacs-lisp 
+  (use-package org
+               :ensure org-plus-contrib)
+#+END_SRC
+** org-bullets
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :init
+    (setq org-bullets-bullet-list
+	  '("◉" "◎" "○" "☁" "◇" "►"))
+    (setq org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
+			      (sequence "⚑ WAITING(w)" "|")
+			      (sequence "|" "✘ CANCELED(c)")))
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+#+END_SRC
+* General Styling
+** Theme
+*** gruvbox 
+    #+BEGIN_SRC emacs-lisp
+      (use-package gruvbox-theme
+	  :ensure t
+	  :config (load-theme 'gruvbox-dark-medium t))
+    #+END_SRC 
+** Font
+  #+BEGIN_SRC emacs-lisp
+    (add-to-list 'default-frame-alist
+		 '(font . "Inconsolata-14"))
+  #+END_SRC
+* Mac customization
+Sets the command modifier to meta and makes brackets and pipe work
+#+BEGIN_SRC emacs-lisp
+(when (string-equal system-type "darwin")
+  (setq mac-option-modifier nil
+        mac-command-modifier 'meta
+        x-select-enable-clipboard t))
+#+END_SRC
+
+* Sane defaults
+#+BEGIN_SRC emacs-lisp
+  ;; Saves backup files to a custom directory
+  (setq backup-directory-alist `(("." . "~/.emacs-saves")))
+
+  ;; Answering just 'y' or 'n' will do
+  (defalias 'yes-or-no-p 'y-or-n-p)
+
+  ;; Turn off the blinking cursor
+  (blink-cursor-mode -1)
+
+  (setq-default indent-tabs-mode nil)
+
+  ;; Don't count two spaces after a period as the end of a sentence.
+  ;; Just one space is needed.
+  (setq sentence-end-double-space nil)
+
+  ;; delete the region when typing, just like as we expect nowadays.
+  (delete-selection-mode t)
+
+  (show-paren-mode t)
+  (column-number-mode t)
+
+  (global-visual-line-mode)
+
+  ;; -i gets alias definitions from .bash_profile
+  (setq shell-command-switch "-ic")
+
+#+END_SRC
+* Languages
+** C/Java
+Fixes braces alignmet from this:
+#+BEGIN_SRC emacs-lisp
+  (defun my-c-mode-hook ()
+    (setq c-basic-offset 4)
+    (c-set-offset 'substatement-open 0)   ; Curly braces alignment
+    (c-set-offset 'case-label 4))         ; Switch case statements alignment
+
+  (add-hook 'c-mode-hook 'my-c-mode-hook)
+  (add-hook 'java-mode-hook 'my-c-mode-hook)
+#+END_SRC
+** TypeScript
+#+BEGIN_SRC emacs-lisp
+(defun setup-tide-mode ()
+  (interactive)
+  (tide-setup)
+  (flycheck-mode +1)
+  (setq flycheck-check-syntax-automatically '(save mode-enabled))
+  (eldoc-mode +1)
+  (tide-hl-identifier-mode +1)
+  ;; company is an optional dependency. You have to
+  ;; install it separately via package-install
+  ;; `M-x package-install [ret] company`
+  (company-mode +1))
+
+;; aligns annotation to the right hand side
+(setq company-tooltip-align-annotations t)
+
+;; formats the buffer before saving
+(add-hook 'before-save-hook 'tide-format-before-save)
+
+(add-hook 'typescript-mode-hook #'setup-tide-mode)
+
+(use-package tide
+  :ensure t
+  :after (typescript-mode company flycheck)
+  :hook ((typescript-mode . tide-setup)
+         (typescript-mode . tide-hl-identifier-mode)
+         (before-save . tide-format-before-save)))
+#+END_SRC
