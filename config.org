@@ -112,15 +112,27 @@ Sets the command modifier to meta and makes brackets and pipe work
 
 #+END_SRC
 * Languages
-** C/Java
-Fixes braces alignmet from this:
+** JavaScript
+*** [[https://jamiecollinson.com/blog/my-emacs-config/#haskell][Jamie Collinson's JS config]]
 #+BEGIN_SRC emacs-lisp
-  (defun my-c-mode-hook ()
-    (setq c-basic-offset 4)
-    (c-set-offset 'substatement-open 0)   ; Curly braces alignment
-    (c-set-offset 'case-label 4))         ; Switch case statements alignment
+  ;; In JS indent to 2 spaces. 
+  (setq-default js-indent-level 2)
 
-  (add-hook 'c-mode-hook 'my-c-mode-hook)
-  (add-hook 'java-mode-hook 'my-c-mode-hook)
+  ;;JS2-mode improves built in JS mode.
+  (use-package js2-mode
+    :ensure t
+    :mode "\\.js\\'"
+    :config
+    (setq-default js2-ignored-warnings '("msg.extra.trailing.comma")))
+
+  ;; JS2-refactor builds on top of JS2-mode and adds refactoring.
+  (use-package js2-refactor
+    :ensure t
+    :config
+    (js2r-add-keybindings-with-prefix "C-c C-m")
+    (add-hook 'js2-mode-hook 'js2-refactor-mode))
+
+  ;; RJSX mode makes JSX work well.
+  (use-package rjsx-mode
+    :ensure t)
 #+END_SRC
-
