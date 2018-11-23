@@ -73,6 +73,13 @@
     (add-to-list 'default-frame-alist
 		 '(font . "Inconsolata-14"))
   #+END_SRC
+* Magit
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t)
+  ;; disable built in VC package for performance
+  (setq vc-handled-backends nil)
+#+END_SRC
 * Mac customization
 Sets the command modifier to meta and makes brackets and pipe work
 #+BEGIN_SRC emacs-lisp
@@ -113,7 +120,7 @@ Sets the command modifier to meta and makes brackets and pipe work
 #+END_SRC
 * Languages
 ** JavaScript
-*** [[https://jamiecollinson.com/blog/my-emacs-config/#haskell][Jamie Collinson's JS config]]
+*** [[ https://jamiecollinson.com/blog/my-emacs-config/#javascript][Jamie Collinson's JS config]]
 #+BEGIN_SRC emacs-lisp
   ;; In JS indent to 2 spaces. 
   (setq-default js-indent-level 2)
@@ -126,13 +133,13 @@ Sets the command modifier to meta and makes brackets and pipe work
     (setq-default js2-ignored-warnings '("msg.extra.trailing.comma")))
 
   ;; JS2-refactor builds on top of JS2-mode and adds refactoring.
-  (use-package js2-refactor
+(use-package js2-refactor
     :ensure t
     :config
-    (js2r-add-keybindings-with-prefix "C-c C-m")
+    (js2r-add-keybindings-with-prefix "C-c C-j")
     (add-hook 'js2-mode-hook 'js2-refactor-mode))
 
   ;; RJSX mode makes JSX work well.
-  (use-package rjsx-mode
+(use-package rjsx-mode
     :ensure t)
 #+END_SRC
