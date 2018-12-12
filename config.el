@@ -91,23 +91,36 @@
 ;; -i gets alias definitions from .bash_profile
 (setq shell-command-switch "-ic")
 
+(use-package tern
+  :ensure t
+  :init 
+  (add-to-list 'load-path "~/Repos/tern/emacs/")
+  (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
+  :config
+  (use-package company-tern
+    :ensure t
+    :init (with-eval-after-load 'company(add-to-list 'company-backends 'company-tern))))
+
+(define-key tern-mode-keymap (kbd "M-,") nil)
+(define-key tern-mode-keymap (kbd "M-.") nil)
+
 ;; In JS indent to 2 spaces. 
-  (setq-default js-indent-level 2)
+(setq-default js-indent-level 2)
 
-  ;;JS2-mode improves built in JS mode.
-  (use-package js2-mode
-    :ensure t
-    :mode "\\.js\\'"
-    :config
-    (setq-default js2-ignored-warnings '("msg.extra.trailing.comma")))
+;;JS2-mode improves built in JS mode.
+(use-package js2-mode
+  :ensure t
+  :mode "\\.js\\'"
+  :config
+  (setq-default js2-ignored-warnings '("msg.extra.trailing.comma")))
 
-  ;; JS2-refactor builds on top of JS2-mode and adds refactoring.
+;; JS2-refactor builds on top of JS2-mode and adds refactoring.
 (use-package js2-refactor
-    :ensure t
-    :config
-    (js2r-add-keybindings-with-prefix "C-c C-j")
-    (add-hook 'js2-mode-hook 'js2-refactor-mode))
+  :ensure t
+  :config
+  (js2r-add-keybindings-with-prefix "C-c C-j")
+  (add-hook 'js2-mode-hook 'js2-refactor-mode))
 
-  ;; RJSX mode makes JSX work well.
+;; RJSX mode makes JSX work well.
 (use-package rjsx-mode
-    :ensure t)
+:ensure t)
