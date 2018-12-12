@@ -40,59 +40,6 @@
 (require 'bind-key)
 #+END_SRC
 
-* Org-mode
-** installation
-#+BEGIN_SRC emacs-lisp 
-  (use-package org
-               :ensure org-plus-contrib)
-#+END_SRC
-** org-bullets
-#+BEGIN_SRC emacs-lisp
-  (use-package org-bullets
-    :ensure t
-    :init
-    (setq org-bullets-bullet-list
-          '("◉" "◎" "○" "☁" "◇" "►"))
-
-    (setq org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
-                              (sequence "⚑ WAITING(w)" "|")
-                              (sequence "|" "✘ CANCELED(c)")))
-
-    ;; Without this, org-mode becomes very slow
-    (setq inhibit-compacting-font-caches t)
-    :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-#+END_SRC
-* General Styling
-** Theme
-*** gruvbox 
-    #+BEGIN_SRC emacs-lisp
-      (use-package gruvbox-theme
-	  :ensure t
-	  :config (load-theme 'gruvbox-dark-medium t))
-    #+END_SRC 
-** Font
-  #+BEGIN_SRC emacs-lisp
-    (add-to-list 'default-frame-alist
-		 '(font . "Inconsolata-14"))
-  #+END_SRC
-* Magit
-#+BEGIN_SRC emacs-lisp
-  (use-package magit
-    :ensure t)
-  ;; disable built in VC package for performance
-  (setq vc-handled-backends nil)
-#+END_SRC
-* Mac customization
-Sets the command modifier to meta and makes brackets and pipe work
-#+BEGIN_SRC emacs-lisp
-(when (string-equal system-type "darwin")
-  (setq mac-option-modifier nil
-        mac-command-modifier 'meta
-        x-select-enable-clipboard t))
-#+END_SRC
-
 * Sane defaults
 #+BEGIN_SRC emacs-lisp
   ;; Saves backup files to a custom directory
@@ -136,7 +83,55 @@ Sets the command modifier to meta and makes brackets and pipe work
   (define-key input-decode-map [?\C-m] [C-m])
 
 #+END_SRC
-* Tern
+* Mac customization
+Sets the command modifier to meta and makes brackets and pipe work
+#+BEGIN_SRC emacs-lisp
+(when (string-equal system-type "darwin")
+  (setq mac-option-modifier nil
+        mac-command-modifier 'meta
+        x-select-enable-clipboard t))
+#+END_SRC
+
+* Org
+** installation
+#+BEGIN_SRC emacs-lisp 
+  (use-package org
+               :ensure org-plus-contrib)
+#+END_SRC
+** org-bullets
+#+BEGIN_SRC emacs-lisp
+  (use-package org-bullets
+    :ensure t
+    :init
+    (setq org-bullets-bullet-list
+          '("◉" "◎" "○" "☁" "◇" "►"))
+
+    (setq org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
+                              (sequence "⚑ WAITING(w)" "|")
+                              (sequence "|" "✘ CANCELED(c)")))
+
+    ;; Without this, org-mode becomes very slow
+    (setq inhibit-compacting-font-caches t)
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+#+END_SRC
+* General Styling
+** Theme
+*** gruvbox 
+    #+BEGIN_SRC emacs-lisp
+      (use-package gruvbox-theme
+	  :ensure t
+	  :config (load-theme 'gruvbox-dark-medium t))
+    #+END_SRC 
+** Font
+  #+BEGIN_SRC emacs-lisp
+    (add-to-list 'default-frame-alist
+		 '(font . "Inconsolata-14"))
+  #+END_SRC
+* Coding
+** Autocomplete
+*** Tern
 #+BEGIN_SRC emacs-lisp
   ;; Used for auto-completion
   (use-package tern
@@ -153,9 +148,16 @@ Sets the command modifier to meta and makes brackets and pipe work
   (define-key tern-mode-keymap (kbd "M-.") nil)
 #+END_SRC
 
-* Languages
+** GIT
+*** Magit
+#+BEGIN_SRC emacs-lisp
+  (use-package magit
+    :ensure t)
+  ;; disable built in VC package for performance
+  (setq vc-handled-backends nil)
+#+END_SRC
 ** JavaScript
-*** [[ https://jamiecollinson.com/blog/my-emacs-config/#javascript][Jamie Collinson's JS config]]
+[[ https://jamiecollinson.com/blog/my-emacs-config/#javascript][Jamie Collinson's JS config]]
 #+BEGIN_SRC emacs-lisp
   ;; In JS indent to 2 spaces. 
   (setq-default js-indent-level 2)
@@ -171,7 +173,6 @@ Sets the command modifier to meta and makes brackets and pipe work
   (use-package js2-refactor
     :ensure t
     :config
-    (js2r-add-keybindings-with-prefix "C-c C-j")
     (js2r-add-keybindings-with-prefix "C-c C-m")
     (add-hook 'js2-mode-hook 'js2-refactor-mode))
 
@@ -179,3 +180,4 @@ Sets the command modifier to meta and makes brackets and pipe work
   (use-package rjsx-mode
   :ensure t)
 #+END_SRC
+
