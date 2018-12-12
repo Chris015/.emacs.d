@@ -132,6 +132,9 @@ Sets the command modifier to meta and makes brackets and pipe work
   ;; -i gets alias definitions from .bash_profile
   (setq shell-command-switch "-ic")
 
+  ;; C-m is not the same as RET any more
+  (define-key input-decode-map [?\C-m] [C-m])
+
 #+END_SRC
 * Tern
 #+BEGIN_SRC emacs-lisp
