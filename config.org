@@ -1,4 +1,3 @@
-
 #+TITLE: Emacs Configuration
 #+DATE: <2018-02-25 Sun>
 #+AUTHOR: Christopher Olsson
@@ -53,12 +52,17 @@
     :ensure t
     :init
     (setq org-bullets-bullet-list
-	  '("◉" "◎" "○" "☁" "◇" "►"))
+          '("◉" "◎" "○" "☁" "◇" "►"))
+
     (setq org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
-			      (sequence "⚑ WAITING(w)" "|")
-			      (sequence "|" "✘ CANCELED(c)")))
+                              (sequence "⚑ WAITING(w)" "|")
+                              (sequence "|" "✘ CANCELED(c)")))
+
+    ;; Without this, org-mode becomes very slow
+    (setq inhibit-compacting-font-caches t)
     :config
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
 #+END_SRC
 * General Styling
 ** Theme
@@ -92,7 +96,18 @@ Sets the command modifier to meta and makes brackets and pipe work
 * Sane defaults
 #+BEGIN_SRC emacs-lisp
   ;; Saves backup files to a custom directory
-  (setq backup-directory-alist `(("." . "~/.emacs-saves")))
+  (defvar user-temporary-file-directory
+    (concat temporary-file-directory user-login-name "/"))
+  (make-directory user-temporary-file-directory t)
+  (setq backup-by-copying t)
+  (setq backup-directory-alist
+        `(("." . ,user-temporary-file-directory)
+          (,tramp-file-name-regexp nil)))
+  (setq auto-save-list-file-prefix
+        (concat user-temporary-file-directory ".auto-saves-"))
+  (setq auto-save-file-name-transforms
+        `((".*" ,user-temporary-file-directory t)))
+
 
   ;; Answering just 'y' or 'n' will do
   (defalias 'yes-or-no-p 'y-or-n-p)
@@ -118,6 +133,22 @@ Sets the command modifier to meta and makes brackets and pipe work
   (setq shell-command-switch "-ic")
 
 #+END_SRC
+* Tern
+#+BEGIN_SRC emacs-lisp
+  (use-package tern
+    :ensure t
+    :init 
+    (add-to-list 'load-path "~/Repos/tern/emacs/")
+    (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
+    :config
+    (use-package company-tern
+      :ensure t
+      :init (with-eval-after-load 'company(add-to-list 'company-backends 'company-tern))))
+
+  (define-key tern-mode-keymap (kbd "M-,") nil)
+  (define-key tern-mode-keymap (kbd "M-.") nil)
+#+END_SRC
+
 * Languages
 ** JavaScript
 *** [[ https://jamiecollinson.com/blog/my-emacs-config/#javascript][Jamie Collinson's JS config]]
@@ -133,13 +164,13 @@ Sets the command modifier to meta and makes brackets and pipe work
     (setq-default js2-ignored-warnings '("msg.extra.trailing.comma")))
 
   ;; JS2-refactor builds on top of JS2-mode and adds refactoring.
-(use-package js2-refactor
+  (use-package js2-refactor
     :ensure t
     :config
     (js2r-add-keybindings-with-prefix "C-c C-j")
     (add-hook 'js2-mode-hook 'js2-refactor-mode))
 
   ;; RJSX mode makes JSX work well.
-(use-package rjsx-mode
-    :ensure t)
+  (use-package rjsx-mode
+  :ensure t)
 #+END_SRC
