@@ -172,6 +172,7 @@ Sets the command modifier to meta and makes brackets and pipe work
     :ensure t
     :config
     (js2r-add-keybindings-with-prefix "C-c C-j")
+    (js2r-add-keybindings-with-prefix "C-c C-m")
     (add-hook 'js2-mode-hook 'js2-refactor-mode))
 
   ;; RJSX mode makes JSX work well.
