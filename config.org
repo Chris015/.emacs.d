@@ -135,6 +135,7 @@ Sets the command modifier to meta and makes brackets and pipe work
 #+END_SRC
 * Tern
 #+BEGIN_SRC emacs-lisp
+  ;; Used for auto-completion
   (use-package tern
     :ensure t
     :init 
