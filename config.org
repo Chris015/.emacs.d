@@ -79,8 +79,15 @@
   ;; -i gets alias definitions from .bash_profile
   (setq shell-command-switch "-ic")
 
-  ;; C-m is not the same as RET any more
+
+  ;; Change C-m from RET to C-m
   (define-key input-decode-map [?\C-m] [C-m])
+
+  (defun inform-about-m-fix()
+    (interactive)
+    (message "C-m is not the same as RET any more!"))
+
+  (global-set-key (kbd "<C-m>") #'inform-about-m-fix)
 
 #+END_SRC
 * Mac customization
@@ -130,6 +137,20 @@ Sets the command modifier to meta and makes brackets and pipe work
 		 '(font . "Inconsolata-14"))
   #+END_SRC
 * Coding
+** General
+*** Multiple cursors
+#+BEGIN_SRC emacs-lisp
+  (use-package multiple-cursors
+    :ensure t)
+  ;; When you have an active region that spans multiple lines,
+  ;; the following will add a cursor to each line:
+  (global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+  ;; When you want to add multiple cursors not based on continuous lines,
+  ;; but based on keywords in the buffer, use:
+  (global-set-key (kbd "C->") 'mc/mark-next-like-this)
+  (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+  (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+#+END_SRC
 ** Autocomplete
 *** Tern
 #+BEGIN_SRC emacs-lisp
@@ -138,7 +159,9 @@ Sets the command modifier to meta and makes brackets and pipe work
     :ensure t
     :init 
     (add-to-list 'load-path "~/Repos/tern/emacs/")
-    (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
+    (add-hook 'js2-mode-hook (lambda () 
+                               (tern-mode)
+                               (company-mode)))
     :config
     (use-package company-tern
       :ensure t
@@ -173,7 +196,7 @@ Sets the command modifier to meta and makes brackets and pipe work
   (use-package js2-refactor
     :ensure t
     :config
-    (js2r-add-keybindings-with-prefix "C-c C-m")
+    (js2r-add-keybindings-with-prefix "C-c <C-m>")
     (add-hook 'js2-mode-hook 'js2-refactor-mode))
 
   ;; RJSX mode makes JSX work well.
