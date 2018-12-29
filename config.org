@@ -79,12 +79,6 @@
   ;; -i gets alias definitions from .bash_profile
   (setq shell-command-switch "-ic")
 
-<<<<<<< HEAD
-  ;; C-m is not the same as RET any more
-  (define-key input-decode-map [?\C-m] [C-m])
-
-=======
-
   ;; Change C-m from RET to C-m
   (define-key input-decode-map [?\C-m] [C-m])
 
@@ -93,8 +87,6 @@
     (message "C-m is not the same as RET any more!"))
 
   (global-set-key (kbd "<C-m>") #'inform-about-m-fix)
-
->>>>>>> 47943008fe3be70cc091008ae4213b605f337f14
 #+END_SRC
 * Mac customization
 Sets the command modifier to meta and makes brackets and pipe work
@@ -202,11 +194,7 @@ Sets the command modifier to meta and makes brackets and pipe work
   (use-package js2-refactor
     :ensure t
     :config
-<<<<<<< HEAD
-    (js2r-add-keybindings-with-prefix "C-c C-m")
-=======
     (js2r-add-keybindings-with-prefix "C-c <C-m>")
->>>>>>> 47943008fe3be70cc091008ae4213b605f337f14
     (add-hook 'js2-mode-hook 'js2-refactor-mode))
 
   ;; RJSX mode makes JSX work well.
