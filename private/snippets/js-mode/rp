@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+#name : ReactProperty
+#key : rp
+#contributor: Christopher Olsson
+# --
+${1:name}={$2}$0
