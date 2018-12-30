@@ -210,7 +210,7 @@ Sets the command modifier to meta and makes brackets and pipe work
 
   ;; RJSX mode makes JSX work well.
   (use-package rjsx-mode
-  :mode "\\.js\\'"
+  :mode "[components|containers|hoc]\\/.*\\.js\\'"
   :ensure t)
 #+END_SRC
 ** CLisp
