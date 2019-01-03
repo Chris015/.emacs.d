@@ -199,7 +199,8 @@ Sets the command modifier to meta and makes brackets and pipe work
   (setq vc-handled-backends nil)
 #+END_SRC
 ** JavaScript
-[[ https://jamiecollinson.com/blog/my-emacs-config/#javascript][Jamie Collinson's JS config]]
+Jamie Collinson's JS config
+https://jamiecollinson.com/blog/my-emacs-config/#javascript
 #+BEGIN_SRC emacs-lisp
   ;; In JS indent to 2 spaces. 
   (setq-default js-indent-level 2)
