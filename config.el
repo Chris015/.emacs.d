@@ -118,9 +118,10 @@
 (use-package js2-refactor
   :ensure t
   :config
-  (js2r-add-keybindings-with-prefix "C-c C-j")
+  (js2r-add-keybindings-with-prefix "C-c <C-m>")
   (add-hook 'js2-mode-hook 'js2-refactor-mode))
 
 ;; RJSX mode makes JSX work well.
 (use-package rjsx-mode
+:mode "[components|containers|hoc]\\/.*\\.js\\'"
 :ensure t)
