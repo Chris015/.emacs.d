@@ -144,6 +144,14 @@ Sets the command modifier to meta and makes brackets and pipe work
            ("C-. C-l" . ace-jump-line-mode)))
 
 #+END_SRC
+** Projectile
+   
+   #+BEGIN_SRC emacs-lisp
+     (use-package projectile
+       :ensure t
+       :bind-keymap
+       ("C-c p" . projectile-command-map))
+#+END_SRC
 * Coding
 ** General
 *** Multiple cursors
