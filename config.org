@@ -132,7 +132,7 @@ Sets the command modifier to meta and makes brackets and pipe work
 ** Font
   #+BEGIN_SRC emacs-lisp
     (add-to-list 'default-frame-alist
-		 '(font . "Inconsolata-14"))
+		 '(font . "Inconsolata-12"))
   #+END_SRC
 * Navigation
 ** Jump
