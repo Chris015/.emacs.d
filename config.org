@@ -130,10 +130,10 @@ Sets the command modifier to meta and makes brackets and pipe work
 	  :config (load-theme 'gruvbox-dark-medium t))
     #+END_SRC 
 ** Font
-  #+BEGIN_SRC emacs-lisp
-    (add-to-list 'default-frame-alist
-		 '(font . "Inconsolata-14"))
-  #+END_SRC
+   #+BEGIN_SRC emacs-lisp
+     (add-to-list 'default-frame-alist
+                  '(font . "Inconsolata-10"))
+   #+END_SRC
 * Navigation
 ** Jump
 #+BEGIN_SRC emacs-lisp
