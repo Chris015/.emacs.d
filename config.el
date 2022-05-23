@@ -13,11 +13,7 @@
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/") t)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-(when (boundp 'package-pinned-packages)
-  (setq package-pinned-packages
-        '((org-plus-contrib . "org"))))
-(package-initialize)
+(unless package--initialized (package-initialize t))
 
 ;;; Bootstrap use-package
 ;; Install use-package if it's not already installed.
@@ -30,46 +26,22 @@
   (require 'use-package))
 (require 'bind-key)
 
-(use-package org
-             :ensure org-plus-contrib)
-
-(use-package org-bullets
-  :ensure t
-  :init
-  (setq org-bullets-bullet-list
-        '("◉" "◎" "○" "☁" "◇" "►"))
-
-  (setq org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
-                            (sequence "⚑ WAITING(w)" "|")
-                            (sequence "|" "✘ CANCELED(c)")))
-
-  ;; Without this, org-mode becomes very slow
-  (setq inhibit-compacting-font-caches t)
-  :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-
-(use-package gruvbox-theme
-    :ensure t
-    :config (load-theme 'gruvbox-dark-medium t))
-
-(add-to-list 'default-frame-alist
-	     '(font . "Inconsolata-14"))
-
-(use-package magit
-  :ensure t)
-;; disable built in VC package for performance
-(setq vc-handled-backends nil)
-
-(when (string-equal system-type "darwin")
-  (setq mac-option-modifier nil
-        mac-command-modifier 'meta
-        x-select-enable-clipboard t))
-
 ;; Saves backup files to a custom directory
-(setq backup-directory-alist `(("." . "~/.emacs-saves")))
+  (defvar user-temporary-file-directory
+      (concat temporary-file-directory user-login-name "/"))
+  (make-directory user-temporary-file-directory t)
+  (setq backup-by-copying t)
+  (setq backup-directory-alist
+          `(("." . ,user-temporary-file-directory)
+          (,tramp-file-name-regexp nil)))
+  (setq auto-save-list-file-prefix
+          (concat user-temporary-file-directory ".auto-saves-"))
+  (setq auto-save-file-name-transforms
+          `((".*" ,user-temporary-file-directory t)))
 
-;; Answering just 'y' or 'n' will do
-(defalias 'yes-or-no-p 'y-or-n-p)
+
+  ;; Answering just 'y' or 'n' will do
+  (defalias 'yes-or-no-p 'y-or-n-p)
 
 ;; Turn off the blinking cursor
 (blink-cursor-mode -1)
@@ -91,37 +63,68 @@
 ;; -i gets alias definitions from .bash_profile
 (setq shell-command-switch "-ic")
 
-(use-package tern
+;; Change C-m from RET to C-m
+(define-key input-decode-map [?\C-m] [C-m])
+
+(defun inform-about-m-fix()
+  (interactive)
+  (message "C-m is not the same as RET any more!"))
+
+(global-set-key (kbd "<C-m>") #'inform-about-m-fix)
+
+(when (string-equal system-type "darwin")
+(setq mac-option-modifier nil
+        mac-command-modifier 'meta
+        x-select-enable-clipboard t))
+
+(use-package org-bullets
   :ensure t
-  :init 
-  (add-to-list 'load-path "~/Repos/tern/emacs/")
-  (add-hook 'js2-mode-hook (lambda () (tern-mode t)))
+  :init
+  (setq org-bullets-bullet-list
+        '("◉" "◎" "○" "☁" "◇" "►"))
+
+  (setq org-todo-keywords '((sequence "☛ TODO(t)" "|" "✔ DONE(d)")
+                            (sequence "⚑ WAITING(w)" "|")
+                            (sequence "|" "✘ CANCELED(c)")))
+
+  ;; Without this, org-mode becomes very slow
+  (setq inhibit-compacting-font-caches t)
   :config
-  (use-package company-tern
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+
+(use-package evil
+            :ensure t)
+
+(use-package gruvbox-theme
     :ensure t
-    :init (with-eval-after-load 'company(add-to-list 'company-backends 'company-tern))))
+    :config (load-theme 'gruvbox-dark-medium t))
 
-(define-key tern-mode-keymap (kbd "M-,") nil)
-(define-key tern-mode-keymap (kbd "M-.") nil)
+(add-to-list 'default-frame-alist
+             '(font . "Inconsolata-14"))
 
-;; In JS indent to 2 spaces. 
-(setq-default js-indent-level 2)
-
-;;JS2-mode improves built in JS mode.
-(use-package js2-mode
+(use-package ace-jump-mode
   :ensure t
-  :mode "\\.js\\'"
-  :config
-  (setq-default js2-ignored-warnings '("msg.extra.trailing.comma")))
+  :bind (("C-. C-." . ace-jump-word-mode)
+         ("C-. C-k" . ace-jump-char-mode)
+         ("C-. C-l" . ace-jump-line-mode)))
 
-;; JS2-refactor builds on top of JS2-mode and adds refactoring.
-(use-package js2-refactor
+(use-package projectile
   :ensure t
-  :config
-  (js2r-add-keybindings-with-prefix "C-c <C-m>")
-  (add-hook 'js2-mode-hook 'js2-refactor-mode))
+  :bind-keymap
+  ("C-c p" . projectile-command-map))
 
-;; RJSX mode makes JSX work well.
-(use-package rjsx-mode
-:mode "[components|containers|hoc]\\/.*\\.js\\'"
-:ensure t)
+(use-package multiple-cursors
+  :ensure t)
+;; When you have an active region that spans multiple lines,
+;; the following will add a cursor to each line:
+(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
+;; When you want to add multiple cursors not based on continuous lines,
+;; but based on keywords in the buffer, use:
+(global-set-key (kbd "C->") 'mc/mark-next-like-this)
+(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
+(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+
+(use-package magit
+  :ensure t)
+;; disable built in VC package for performance
+(setq vc-handled-backends nil)

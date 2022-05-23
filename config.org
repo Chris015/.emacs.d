@@ -4,7 +4,7 @@
 
 * Inital setup
 ** Window
-#+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
 ;;; Turn off mouse interface early in startup to avoid momentary display
 (when window-system
   (menu-bar-mode -1)
@@ -16,16 +16,12 @@
 
 (custom-set-variables
  '(initial-frame-alist (quote ((fullscreen . maximized)))))
-#+END_SRC
+   #+END_SRC
 ** Package
-#+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "http://melpa.org/packages/") t)
-(add-to-list 'package-archives '("org" . "http://orgmode.org/elpa/") t)
-(when (boundp 'package-pinned-packages)
-  (setq package-pinned-packages
-        '((org-plus-contrib . "org"))))
 (unless package--initialized (package-initialize t))
 
 ;;; Bootstrap use-package
@@ -38,26 +34,26 @@
 (eval-when-compile
   (require 'use-package))
 (require 'bind-key)
-#+END_SRC
+   #+END_SRC
 
 * Sane defaults
-#+BEGIN_SRC emacs-lisp
-  ;; Saves backup files to a custom directory
-  (defvar user-temporary-file-directory
-    (concat temporary-file-directory user-login-name "/"))
-  (make-directory user-temporary-file-directory t)
-  (setq backup-by-copying t)
-  (setq backup-directory-alist
-        `(("." . ,user-temporary-file-directory)
-          (,tramp-file-name-regexp nil)))
-  (setq auto-save-list-file-prefix
-        (concat user-temporary-file-directory ".auto-saves-"))
-  (setq auto-save-file-name-transforms
-        `((".*" ,user-temporary-file-directory t)))
+  #+BEGIN_SRC emacs-lisp
+    ;; Saves backup files to a custom directory
+    (defvar user-temporary-file-directory
+        (concat temporary-file-directory user-login-name "/"))
+    (make-directory user-temporary-file-directory t)
+    (setq backup-by-copying t)
+    (setq backup-directory-alist
+            `(("." . ,user-temporary-file-directory)
+            (,tramp-file-name-regexp nil)))
+    (setq auto-save-list-file-prefix
+            (concat user-temporary-file-directory ".auto-saves-"))
+    (setq auto-save-file-name-transforms
+            `((".*" ,user-temporary-file-directory t)))
 
 
-  ;; Answering just 'y' or 'n' will do
-  (defalias 'yes-or-no-p 'y-or-n-p)
+    ;; Answering just 'y' or 'n' will do
+    (defalias 'yes-or-no-p 'y-or-n-p)
 
   ;; Turn off the blinking cursor
   (blink-cursor-mode -1)
@@ -87,24 +83,19 @@
     (message "C-m is not the same as RET any more!"))
 
   (global-set-key (kbd "<C-m>") #'inform-about-m-fix)
-#+END_SRC
+  #+END_SRC
 * Mac customization
-Sets the command modifier to meta and makes brackets and pipe work
-#+BEGIN_SRC emacs-lisp
-(when (string-equal system-type "darwin")
-  (setq mac-option-modifier nil
-        mac-command-modifier 'meta
-        x-select-enable-clipboard t))
-#+END_SRC
+  Sets the command modifier to meta and makes brackets and pipe work
+  #+BEGIN_SRC emacs-lisp
+    (when (string-equal system-type "darwin")
+    (setq mac-option-modifier nil
+            mac-command-modifier 'meta
+            x-select-enable-clipboard t))
+  #+END_SRC
 
 * Org
-** installation
-#+BEGIN_SRC emacs-lisp 
-  (use-package org
-               :ensure org-plus-contrib)
-#+END_SRC
 ** org-bullets
-#+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
   (use-package org-bullets
     :ensure t
     :init
@@ -120,13 +111,13 @@ Sets the command modifier to meta and makes brackets and pipe work
     :config
     (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
 
-#+END_SRC
+   #+END_SRC
 * Evil mode
-An extensible vi layer. Provides Vim features like Visual selextion etc
-#+BEGIN_SRC emacs-lisp
-  (use-package evil
-               :ensure t)
-#+END_SRC
+  An extensible vi layer. Provides Vim features like Visual selextion etc
+  #+BEGIN_SRC emacs-lisp
+    (use-package evil
+                :ensure t)
+  #+END_SRC
 * General Styling
 ** Theme
 *** gruvbox 
@@ -142,14 +133,14 @@ An extensible vi layer. Provides Vim features like Visual selextion etc
    #+END_SRC
 * Navigation
 ** Jump
-#+BEGIN_SRC emacs-lisp
+   #+BEGIN_SRC emacs-lisp
   (use-package ace-jump-mode
     :ensure t
     :bind (("C-. C-." . ace-jump-word-mode)
            ("C-. C-k" . ace-jump-char-mode)
            ("C-. C-l" . ace-jump-line-mode)))
 
-#+END_SRC
+   #+END_SRC
 ** Projectile
    
    #+BEGIN_SRC emacs-lisp
@@ -157,11 +148,11 @@ An extensible vi layer. Provides Vim features like Visual selextion etc
        :ensure t
        :bind-keymap
        ("C-c p" . projectile-command-map))
-#+END_SRC
+   #+END_SRC
 * Coding
 ** General
 *** Multiple cursors
-#+BEGIN_SRC emacs-lisp
+    #+BEGIN_SRC emacs-lisp
   (use-package multiple-cursors
     :ensure t)
   ;; When you have an active region that spans multiple lines,
@@ -172,69 +163,12 @@ An extensible vi layer. Provides Vim features like Visual selextion etc
   (global-set-key (kbd "C->") 'mc/mark-next-like-this)
   (global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
   (global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
-#+END_SRC
-** Snippets
-*** Yasnippet
-    #+BEGIN_SRC emacs-lisp
-      (use-package yasnippet
-        :ensure t
-        :config
-        (yas-global-mode t)
-        (use-package yasnippet-snippets
-                  :ensure t)
-        (yas-reload-all))
     #+END_SRC
-** Autocomplete
-*** Tern
-#+BEGIN_SRC emacs-lisp
-  ;; Used for auto-completion
-  (use-package tern
-    :ensure t
-    :init 
-    (add-to-list 'load-path "~/Repos/tern/emacs/")
-    (add-hook 'js2-mode-hook (lambda () 
-                               (tern-mode)
-                               (company-mode)))
-    :config
-    (use-package company-tern
-      :ensure t
-      :init (with-eval-after-load 'company(add-to-list 'company-backends 'company-tern))))
-
-  (define-key tern-mode-keymap (kbd "M-,") nil)
-  (define-key tern-mode-keymap (kbd "M-.") nil)
-#+END_SRC
-
 ** GIT
 *** Magit
-#+BEGIN_SRC emacs-lisp
+    #+BEGIN_SRC emacs-lisp
   (use-package magit
     :ensure t)
   ;; disable built in VC package for performance
   (setq vc-handled-backends nil)
-#+END_SRC
-** JavaScript
-Jamie Collinson's JS config
-https://jamiecollinson.com/blog/my-emacs-config/#javascript
-#+BEGIN_SRC emacs-lisp
-  ;; In JS indent to 4 spaces. 
-  (setq-default js-indent-level 4)
-
-  ;;JS2-mode improves built in JS mode.
-  (use-package js2-mode
-    :ensure t
-    :mode "\\.js\\'"
-    :config
-    (setq-default js2-ignored-warnings '("msg.extra.trailing.comma")))
-
-  ;; JS2-refactor builds on top of JS2-mode and adds refactoring.
-  (use-package js2-refactor
-    :ensure t
-    :config
-    (js2r-add-keybindings-with-prefix "C-c <C-m>")
-    (add-hook 'js2-mode-hook 'js2-refactor-mode))
-
-  ;; RJSX mode makes JSX work well.
-  (use-package rjsx-mode
-  :mode "[components|containers|hoc]\\/.*\\.js\\'"
-  :ensure t)
-#+END_SRC
+    #+END_SRC
